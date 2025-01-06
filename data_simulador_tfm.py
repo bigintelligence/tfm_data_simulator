@@ -63,7 +63,7 @@ def simular_data_tfm(num_filas: int,
 
 if __name__ == '__main__':
     # uso para TFM
-    # df = simular_data_tfm(50, 10, 5, 0.8, semilla=42, nombre_csv='test.csv')
+    # df = simular_data_tfm(50, 10, 5, 0.8, semilla=42, nombre_csv='BD_sintetica.csv')
     # print(df.head())
     # print(df.corr())
     parser = argparse.ArgumentParser(description='Generar datos aleatorios con sierta correlacion '
@@ -84,4 +84,4 @@ if __name__ == '__main__':
                      nombre_csv=args.nombre_csv)
 
     # ejemplo de ejecucion
-    # data_simulador_tfm.py -f 100 -c 10 -cr 5 -crr 0.8 -s 42 -n test2.csv
+    # data_simulador_tfm.py -f 100 -c 10 -cr 5 -crr 0.8 -s 42 -n BD_sintetica.csv
