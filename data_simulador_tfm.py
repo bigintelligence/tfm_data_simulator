@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import argparse
+from sklearn.preprocessing import MinMaxScaler
 
 
 def generar_dataframe(num_filas: int,
@@ -10,7 +11,7 @@ def generar_dataframe(num_filas: int,
                       semilla: int = None) -> pd.DataFrame:
     """
     Genera un DataFrame de Pandas con valores aleatorios y una correlación positiva
-    especificada entre las primeras columnas.
+    especificada entre las primeras columnas.La ultima columna será siempre la dependiente CES-D.
 
     Args:
     num_filas: Número de filas del DataFrame.
@@ -28,17 +29,24 @@ def generar_dataframe(num_filas: int,
         np.random.seed(semilla)
 
     # Generamos una matriz de valores aleatorios estándar
-    cov_matrix = np.eye(num_columnas)
+    cov_matrix = np.eye(num_columnas+1)
     # La columnas correlacionadas no deben ser mayor al numero de columnas
     if num_col_relacionadas <= num_columnas:
         cov_matrix[:num_col_relacionadas, :num_col_relacionadas] = correlacion
         for i in range(len(cov_matrix)):
             cov_matrix[i][i] = 1  # correlacion por defecto de cada columna
-    data = np.random.multivariate_normal(mean=np.zeros(num_columnas), cov=cov_matrix, size=num_filas)
+
+    # agregar la variable dependiente
+    cov_matrix[:num_col_relacionadas, num_columnas] = correlacion
+    cov_matrix[num_columnas, :num_col_relacionadas] = correlacion
+    # print(cov_matrix)
+    # print(cov_matrix.shape)
+    data = np.random.multivariate_normal(mean=np.zeros(num_columnas+1), cov=cov_matrix, size=num_filas)
 
     # Creamos el DataFrame
-    df = pd.DataFrame(data, columns=[f'Columna_{i+1}' for i in range(num_columnas)])
-
+    col_names = [f'Columna_{i+1}' for i in range(num_columnas)]
+    col_names.append("CES-D")
+    df = pd.DataFrame(data, columns=col_names)
     return df
 
 
@@ -49,16 +57,24 @@ def simular_data_tfm(num_filas: int,
                      semilla: int = 42,
                      nombre_csv: str = None) -> pd.DataFrame:
     df = generar_dataframe(num_filas, num_columnas, num_col_relacionadas, correlacion, semilla)
+    # escalar las columnas
+    scaler_x = MinMaxScaler(feature_range=(0, 100))
+    x_scaled = scaler_x.fit_transform(df.drop(columns=['CES-D']))
+    df_scaled = pd.DataFrame(x_scaled, columns=df.columns[:-1])
+
+    # escalar la variable dependiente de 0 a 60
+    scaler_y = MinMaxScaler(feature_range=(0, 60))
+    df_scaled['CES-D'] = scaler_y.fit_transform(df[['CES-D']]).flatten()
     # solo enteros no negativos
-    for col in df.columns:
-        df[col] = df[col].apply(lambda x: int(x*100)).abs()
+    for col in df_scaled.columns:
+        df_scaled[col] = df_scaled[col].apply(lambda x: int(x)).abs()
 
     # exportar a csv
     if nombre_csv:
-        df.to_csv(nombre_csv, index_label='index')
+        df_scaled.to_csv(nombre_csv, index_label='index')
 
-    print(df.corr())  # check correlation
-    return df
+    print(df_scaled.corr())  # check correlation
+    return df_scaled
 
 
 if __name__ == '__main__':
