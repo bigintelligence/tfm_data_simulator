@@ -18,4 +18,12 @@ pip install -r requirements.txt
 - ejecutar el script
 ```
 data_simulador_tfm.py -f 100 -c 10 -cr 5 -crr 0.8 -s 42 -n test2.csv
+
 ```
+
+- f --filas, type=int, numero de filas
+- c --columnas, type=int, numero de columnas
+- cr --columnas-relacionadas, type=int, numero de columnas relacionadas
+- crr --correlacion, type=float, coeficiente de correlacion en tre las columnas relacionadas
+- s --semilla, type=int, semilla'
+- n --nombre-csv, type=str, Path/nombre del fichero csv a generar
