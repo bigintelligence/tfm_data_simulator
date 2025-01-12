@@ -1,5 +1,11 @@
 # TFM data simulador
-Simulador para generar datos para TFM
+
+Simulador para generar datos para TFM.
+TFM Proyecto de viabilidad de un modelo 
+predictivo de la escala de depresión CES-D.
+
+Generar datos aleatorios con sierta correlacion para evaluar 
+modelos del TFM.
 
 # Requerimientos
 
@@ -20,7 +26,7 @@ pip install -r requirements.txt
 data_simulador_tfm.py -f 100 -c 10 -cr 5 -crr 0.8 -s 42 -n test2.csv
 
 ```
-
+### Argumentos del script
 - f --filas, type=int, numero de filas
 - c --columnas, type=int, numero de columnas
 - cr --columnas-relacionadas, type=int, numero de columnas relacionadas
